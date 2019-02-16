@@ -1,13 +1,17 @@
 package com.skilldistillery.filmquery.entities;
 
+import java.util.List;
+
 public class Film {
+	//TODO: Figure out the language query
 	private int id, languageID, rentalDuration, length, year;
-	private String title, description, rating;
+	private String title, description, rating, language;
 	private double rentalRate, replacementCost;
 	private String specialFeatures;
+	private List<Actor> actors;
 
 	public Film(int id, int languageID, int rentalDuration, int length, String title, String description, int year,
-			String rating, double rentalRate, double replacementCost, String specialFeatures) {
+			String rating, double rentalRate, double replacementCost, String specialFeatures, List<Actor> actors) {
 		this.id = id;
 		this.languageID = languageID;
 		this.rentalDuration = rentalDuration;
@@ -19,6 +23,7 @@ public class Film {
 		this.rentalRate = rentalRate;
 		this.replacementCost = replacementCost;
 		this.specialFeatures = specialFeatures;
+		this.actors = actors;
 	}
 
 	public int getId() {
@@ -109,10 +114,19 @@ public class Film {
 		this.specialFeatures = specialFeatures;
 	}
 
+	public List<Actor> getActors() {
+		return actors;
+	}
+
+	public void setActors(List<Actor> actors) {
+		this.actors = actors;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((actors == null) ? 0 : actors.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + id;
 		result = prime * result + languageID;
@@ -139,6 +153,11 @@ public class Film {
 		if (getClass() != obj.getClass())
 			return false;
 		Film other = (Film) obj;
+		if (actors == null) {
+			if (other.actors != null)
+				return false;
+		} else if (!actors.equals(other.actors))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -175,13 +194,27 @@ public class Film {
 			return false;
 		return true;
 	}
+	
+
+	public String toStringSummary() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("\n%15s %s\n", "Title:  ", title));
+		sb.append(String.format("%15s %d\n", "Released:  ", year));
+		sb.append(String.format("%15s %s\n", "Rating:  ", rating));
+//		sb.append(String.format("%15s %s\n", "Language:  ", language));
+		sb.append(String.format("%15s %s", "Description:  ", description));
+		
+		return sb.toString();
+	}
 
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", languageID=" + languageID + ", rentalDuration=" + rentalDuration + ", length="
-				+ length + ", title=" + title + ", description=" + description + ", year=" + year + ", rating=" + rating
+				+ length + ", year=" + year + ", title=" + title + ", description=" + description + ", rating=" + rating
 				+ ", rentalRate=" + rentalRate + ", replacementCost=" + replacementCost + ", specialFeatures="
-				+ specialFeatures + "]";
+				+ specialFeatures + ", actors=" + actors + "]";
 	}
+	
+	
 
 }

@@ -28,7 +28,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASS);
 			stmt = conn.prepareStatement(
-					"SELECT * FROM actor JOIN film_actor ON actor.id = actor_id JOIN film ON film_id = film.id"
+					"SELECT * FROM actor JOIN film_actor ON actor.id = actor_id JOIN film ON film_id = film.id "
 							+ "WHERE film_id LIKE ?");
 			stmt.setInt(1, filmId);
 			rs = stmt.executeQuery();
@@ -71,7 +71,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film = new Film(rs.getInt("id"), rs.getInt("language_id"), rs.getInt("rental_duration"),
 						rs.getInt("length"), rs.getString("title"), rs.getString("description"),
 						rs.getInt("release_year"), rs.getString("rating"), rs.getDouble("rental_rate"),
-						rs.getDouble("replacement_cost"), rs.getString("special_features"));
+						rs.getDouble("replacement_cost"), rs.getString("special_features"), findActorsByFilmId(filmId));
 			}
 
 		} catch (SQLException e) {
@@ -86,6 +86,41 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			}
 		}
 		return film;
+	}
+
+	@Override
+	public List<Film> findFilmByKeyWord(String keyWord) {
+		List<Film> films = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASS);
+			stmt = conn.prepareStatement("SELECT * FROM film WHERE title LIKE ? OR description LIKE ?");
+			stmt.setString(1, "%" + keyWord + "%");
+			stmt.setString(2, "%" + keyWord + "%");
+			rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				if (films == null) {
+					films = new ArrayList<Film>();
+				}
+				films.add(findFilmById(rs.getInt("id")));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+				stmt.close();
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return films;
 	}
 
 	@Override
