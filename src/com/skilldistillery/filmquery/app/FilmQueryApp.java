@@ -13,14 +13,8 @@ public class FilmQueryApp {
 
 	public static void main(String[] args) {
 		FilmQueryApp app = new FilmQueryApp();
-//		app.test();
 		app.launch();
 	}
-
-//	private void test() {
-//		Film film = db.findFilmById(1);
-//		System.out.println(film);
-//	}
 
 	private void launch() {
 		Scanner sc = new Scanner(System.in);
@@ -37,9 +31,12 @@ public class FilmQueryApp {
 			printOptions();
 			try {
 				userSelection = Integer.parseInt(sc.next());
+				if (userSelection == 3) {
+					continue;
+				}
 				doUserSelection(userSelection, sc);
 			} catch (NumberFormatException e) {
-				System.out.print("\nInvalid selection." + "  (Q)uit, or any other key to try again.\n  >> ");
+				System.out.print("\nInvalid selection. (Q)uit, or any other key to try again.\n  >> ");
 				if (sc.next().equalsIgnoreCase("Q")) {
 					break;
 				} else {
@@ -50,18 +47,28 @@ public class FilmQueryApp {
 		} while (userSelection != 3);
 	}
 
-	private String doUserSelection(int option, Scanner sc) {
+	private void doUserSelection(int option, Scanner sc) {
 		switch (option) {
+		// ID search - returns a single film
 		case 1:
 			do {
 				System.out.print("\nEnter a Film ID: ");
 				try {
 					option = Integer.parseInt(sc.next());
 					System.out.println(db.findFilmById(option).toStringSummary());
+
+					System.out.print("\n1. See film details.\n2. Return to Main Menu\n>> ");
+					int filmDetailsOrMainMenu = Integer.parseInt(sc.next());
+
+					if (filmDetailsOrMainMenu == 1) {
+						System.out.println(db.findFilmById(option).toString());
+					} else {
+						return;
+					}
 				} catch (NumberFormatException e) {
-					System.out.print("\nInvalid selection." + "  (Q)uit, or any other key to try again.\n  >> ");
+					System.out.print("\nInvalid selection. (Q)uit, or any other key to try again.\n  >> ");
 					if (sc.next().equalsIgnoreCase("Q")) {
-						return "Q";
+						return;
 					} else {
 						continue;
 					}
@@ -69,23 +76,22 @@ public class FilmQueryApp {
 				break;
 			} while (true);
 			break;
+		// Keyword search - returns multiple films
 		case 2:
 			System.out.print("Enter a search string: ");
 			String input = sc.next();
 			List<Film> films = db.findFilmByKeyWord(input);
 			if (films == null) {
 				System.out.println("\n\tNo films found with the search term: " + input + "\n");
-			}else {
-				for(Film film : films) {
+			} else {
+				for (Film film : films) {
 					System.out.println(film.toStringSummary());
 				}
 			}
 			break;
-		default: 
-				System.out.println("\nInvalid option.\n");
+		default:
+			System.out.println("\nInvalid option.\n");
 		}
-
-		return "";
 	}
 
 	private void printOptions() {

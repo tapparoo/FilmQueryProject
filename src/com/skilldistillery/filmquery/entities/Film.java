@@ -3,23 +3,24 @@ package com.skilldistillery.filmquery.entities;
 import java.util.List;
 
 public class Film {
-	//TODO: Figure out the language query
-	private int id, languageID, rentalDuration, length, year;
-	private String title, description, rating, language;
+	private int id, rentalDuration, length, year;
+	private String title, description, rating, language, specialFeatures;
 	private double rentalRate, replacementCost;
-	private String specialFeatures;
 	private List<Actor> actors;
+	private List<Category> categories;
 
-	public Film(int id, int languageID, int rentalDuration, int length, String title, String description, int year,
-			String rating, double rentalRate, double replacementCost, String specialFeatures, List<Actor> actors) {
+	public Film(int id, int rentalDuration, int length, int year, String title, String description, String rating,
+			String language, List<Category> categories, double rentalRate, double replacementCost,
+			String specialFeatures, List<Actor> actors) {
 		this.id = id;
-		this.languageID = languageID;
 		this.rentalDuration = rentalDuration;
 		this.length = length;
+		this.year = year;
 		this.title = title;
 		this.description = description;
-		this.year = year;
 		this.rating = rating;
+		this.language = language;
+		this.categories = categories;
 		this.rentalRate = rentalRate;
 		this.replacementCost = replacementCost;
 		this.specialFeatures = specialFeatures;
@@ -32,14 +33,6 @@ public class Film {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public int getLanguageID() {
-		return languageID;
-	}
-
-	public void setLanguageID(int languageID) {
-		this.languageID = languageID;
 	}
 
 	public int getRentalDuration() {
@@ -58,6 +51,14 @@ public class Film {
 		this.length = length;
 	}
 
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -74,20 +75,28 @@ public class Film {
 		this.description = description;
 	}
 
-	public int getYear() {
-		return year;
-	}
-
-	public void setYear(int year) {
-		this.year = year;
-	}
-
 	public String getRating() {
 		return rating;
 	}
 
 	public void setRating(String rating) {
 		this.rating = rating;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public List<Category> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
 	}
 
 	public double getRentalRate() {
@@ -127,9 +136,10 @@ public class Film {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((actors == null) ? 0 : actors.hashCode());
+		result = prime * result + ((categories == null) ? 0 : categories.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + id;
-		result = prime * result + languageID;
+		result = prime * result + ((language == null) ? 0 : language.hashCode());
 		result = prime * result + length;
 		result = prime * result + ((rating == null) ? 0 : rating.hashCode());
 		result = prime * result + rentalDuration;
@@ -158,6 +168,11 @@ public class Film {
 				return false;
 		} else if (!actors.equals(other.actors))
 			return false;
+		if (categories == null) {
+			if (other.categories != null)
+				return false;
+		} else if (!categories.equals(other.categories))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -165,7 +180,10 @@ public class Film {
 			return false;
 		if (id != other.id)
 			return false;
-		if (languageID != other.languageID)
+		if (language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!language.equals(other.language))
 			return false;
 		if (length != other.length)
 			return false;
@@ -194,27 +212,61 @@ public class Film {
 			return false;
 		return true;
 	}
-	
 
+	// Default film output
 	public String toStringSummary() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("\n%15s %s\n", "Title:  ", title));
+		sb.append(String.format("\n%15s %s (%s)\n", "Title:  ", title, language));
 		sb.append(String.format("%15s %d\n", "Released:  ", year));
 		sb.append(String.format("%15s %s\n", "Rating:  ", rating));
-//		sb.append(String.format("%15s %s\n", "Language:  ", language));
-		sb.append(String.format("%15s %s", "Description:  ", description));
-		
+		sb.append(String.format("%15s %s\n", "Description:  ", description));
+		sb.append(String.format("%14s  ", "Categories: "));
+		for (int i = 0; i < categories.size(); i++) {
+			sb.append(String.format("%s", categories.get(i).getName()));
+			if (i < categories.size() - 1) {
+				sb.append(", ");
+			}
+		}
+		sb.append(String.format("\n%14s  ", "Cast: "));
+		for (int i = 0; i < actors.size(); i++) {
+			sb.append(String.format("%s %s", actors.get(i).getFirstName(), actors.get(i).getLastName()));
+			if (i < actors.size() - 1) {
+				sb.append(", ");
+			}
+		}
 		return sb.toString();
 	}
-
+	
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", languageID=" + languageID + ", rentalDuration=" + rentalDuration + ", length="
-				+ length + ", year=" + year + ", title=" + title + ", description=" + description + ", rating=" + rating
-				+ ", rentalRate=" + rentalRate + ", replacementCost=" + replacementCost + ", specialFeatures="
-				+ specialFeatures + ", actors=" + actors + "]";
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(String.format("\n%20s %s \n", "Film ID:  ", id));
+		sb.append(String.format("%20s %s\n", "Title:  ", title));
+		sb.append(String.format("%20s %d\n", "Released:  ", year));
+		sb.append(String.format("%20s %s\n", "Rating:  ", rating));
+		sb.append(String.format("%20s %s\n", "Language:  ", language));
+		sb.append(String.format("%20s %s\n", "Length:  ", length));
+		sb.append(String.format("%20s %s\n", "Rental Duration:  ", rentalDuration));
+		sb.append(String.format("%20s %s\n", "Rental Rate:  ", rentalRate));
+		sb.append(String.format("%20s %s\n", "Replacement Cost:  ", replacementCost));
+		sb.append(String.format("%20s %s\n", "Special Features:  ", specialFeatures));
+		sb.append(String.format("%20s %s\n", "Description:  ", description));
+		sb.append(String.format("%19s  ", "Categories: "));
+		for (int i = 0; i < categories.size(); i++) {
+			sb.append(String.format("%s", categories.get(i).getName()));
+			if (i < categories.size() - 1) {
+				sb.append(", ");
+			}
+		}
+		sb.append(String.format("\n%19s  ", "Cast: "));
+		for (int i = 0; i < actors.size(); i++) {
+			sb.append(String.format("%s %s", actors.get(i).getFirstName(), actors.get(i).getLastName()));
+			if (i < actors.size() - 1) {
+				sb.append(", ");
+			}
+		}		
+		return sb.toString();
 	}
-	
-	
 
 }
