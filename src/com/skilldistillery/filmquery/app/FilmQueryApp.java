@@ -54,21 +54,21 @@ public class FilmQueryApp {
 			do {
 				System.out.print("\nEnter a Film ID: ");
 				try {
-					option = Integer.parseInt(sc.next());
-					System.out.println(db.findFilmById(option).toStringSummary());
+					Film film = db.findFilmById(Integer.parseInt(sc.next()));
+					if (film != null) {
+						System.out.println(film.toStringSummary());
+						System.out.print("\n1. See film details.\n2. Return to Main Menu\n>> ");
 
-					System.out.print("\n1. See film details.\n2. Return to Main Menu\n>> ");
-					int filmDetailsOrMainMenu = Integer.parseInt(sc.next());
-
-					if (filmDetailsOrMainMenu == 1) {
-						System.out.println(db.findFilmById(option).toString());
-					} else {
-						return;
+						if (Integer.parseInt(sc.next()) == 1) {
+							System.out.println(film.toString());
+						}
+					}else {
+						System.out.println("\n\tInvalid film ID.");
 					}
 				} catch (NumberFormatException e) {
 					System.out.print("\nInvalid selection. (Q)uit, or any other key to try again.\n  >> ");
 					if (sc.next().equalsIgnoreCase("Q")) {
-						return;
+						break;
 					} else {
 						continue;
 					}
@@ -84,8 +84,8 @@ public class FilmQueryApp {
 			if (films == null) {
 				System.out.println("\n\tNo films found with the search term: " + input + "\n");
 			} else {
-				for (Film film : films) {
-					System.out.println(film.toStringSummary());
+				for (Film f : films) {
+					System.out.println(f.toStringSummary());
 				}
 			}
 			break;

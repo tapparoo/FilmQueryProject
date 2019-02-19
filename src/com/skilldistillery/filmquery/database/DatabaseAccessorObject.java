@@ -31,8 +31,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASS);
 			stmt = conn.prepareStatement(
-					"SELECT * FROM actor JOIN film_actor ON actor.id = actor_id JOIN film ON film_id = film.id "
-							+ "WHERE film_id LIKE ?");
+					"SELECT * FROM actor JOIN film_actor ON actor.id = actor_id "
+							+ "WHERE film_id = ?");
 			stmt.setInt(1, filmId);
 			rs = stmt.executeQuery();
 
@@ -58,8 +58,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	}
 
 	// Joins three tables [category, film_category, film] and returns the list of
-	// categories
-	// based on the filmId parameter
+	// categories based on the filmId parameter
 	@Override
 	public List<Category> findCategoriesByFilmId(int filmId) {
 		List<Category> list = null;
@@ -71,7 +70,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			conn = DriverManager.getConnection(URL, USER, PASS);
 			stmt = conn.prepareStatement(
 					"SELECT * FROM film JOIN film_category ON film.id = film_id JOIN category ON category_id = category.id "
-							+ "WHERE film_id LIKE ?");
+							+ "WHERE film_id = ?");
 			stmt.setInt(1, filmId);
 			rs = stmt.executeQuery();
 
